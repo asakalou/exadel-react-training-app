@@ -1,9 +1,10 @@
 import * as actions from './actions';
 
 
-const defaultState = {
+export const defaultState = {
     item: null,
-    interval: 500,
+    interval: 5,
+    timerStarted: false,
     loading: false,
     error: null
 };
@@ -26,11 +27,32 @@ const reducer = (state = defaultState, action) => {
             }
         }
 
-        case actions.LOAD_ERROR: {
+        case actions.LOAD_CANCEL: {
             return {
                 ...state,
                 loading: false,
-                error: action.error
+                error: null
+            }
+        }
+
+        case actions.START_TIMER: {
+            return {
+                ...state,
+                timerStarted: true
+            }
+        }
+
+        case actions.STOP_TIMER: {
+            return {
+                ...state,
+                timerStarted: false
+            }
+        }
+
+        case actions.CHANGE_INTERVAL: {
+            return {
+                ...state,
+                interval: action.interval
             }
         }
 

@@ -12,7 +12,13 @@ const api = {
         const paramsStr = queryString.stringify({
             api_key: 'USh3CR02XZhJLKXVFEaHjTEhE7Z7qqw8'
         });
-        return ajax.getJSON(`${API_RANDOM_URL}?${paramsStr}`)
+        return ajax({
+            url: `${API_RANDOM_URL}?${paramsStr}`,
+            crossDomain: true,
+            createXHR: function () {
+                return new XMLHttpRequest();
+            }
+        }).map(response => response.response.data);
     },
 
     loadByQuery: ({q, limit, offset}) => {

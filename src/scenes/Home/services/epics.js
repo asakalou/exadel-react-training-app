@@ -1,10 +1,9 @@
 import {combineEpics} from 'redux-observable';
-import giphyApi from '../../../services/api/giphy';
 import {Observable} from 'rxjs';
 
 import * as actions from './actions';
 
-const load = (action$, store) =>
+export const loadEpic = (action$, store, {giphyApi}) =>
     action$.ofType(actions.SEARCH, actions.LOAD_MORE)
         .concatMap(action => {
             const homeState = store.getState().home;
@@ -26,10 +25,10 @@ const load = (action$, store) =>
                     );
                 }).catch(error => {
                     return Observable.of(actions.loadError(error.message));
-                });
+                }).takeUntil(action$.ofType(actions.LOAD_CANCEL));
         });
 
 
 export default combineEpics(
-    load
+    loadEpic
 );

@@ -4,6 +4,7 @@ export const LOAD_MORE = 'home/load-more';
 
 export const LOAD_SUCCESS = 'home/load-success';
 export const LOAD_ERROR = 'home/load-error';
+export const LOAD_CANCEL = 'home/load-cancel';
 
 export const CHANGE_PAGE_SIZE = 'home/change-page-size';
 
@@ -25,6 +26,10 @@ export const loadSuccess = (payload) => {
 
 export const loadError = (error) => {
     return {type: LOAD_ERROR, error};
+};
+
+export const loadCancel = () => {
+    return {type: LOAD_CANCEL};
 };
 
 export const changePageSize = (pageSize) => {

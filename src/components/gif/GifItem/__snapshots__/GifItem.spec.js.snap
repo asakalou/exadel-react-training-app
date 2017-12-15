@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<GifItem/> should render snapshot correctly 1`] = `
+<div
+  className="gif-item"
+>
+  <img
+    alt="alt"
+    src="url"
+  />
+</div>
+`;

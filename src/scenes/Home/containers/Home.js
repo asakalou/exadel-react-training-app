@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import Page from "../../../components/layout/Page/Page";
 import * as actions from "../services/actions";
 import GifItemList from "../../../components/gif/GifItemList";
 
-class Home extends Component {
+import './Home.scss';
+
+export class Home extends Component {
 
     constructor(props) {
         super(props);
@@ -12,6 +13,10 @@ class Home extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleQueryChange = this.handleQueryChange.bind(this);
         this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
+    }
+
+    componentWillUnmount() {
+        this.props.onLoadCancel();
     }
 
     handleSubmit(event) {
@@ -28,14 +33,19 @@ class Home extends Component {
     }
 
     render() {
-        return (
-            <Page header={<h1>Home</h1>}>
+        const showLoadMoreButton = !!this.props.totalItems
+            && (this.props.items.length < this.props.totalItems);
 
-                <form onSubmit={this.handleSubmit}>
-                    <input type="text"
+        return (
+            <div>
+                <h1>Home</h1>
+                <form className="query-form" onSubmit={this.handleSubmit}>
+                    <label htmlFor="query">Query:</label>
+                    <input id="query"
+                           type="text"
                            value={this.props.query}
                            onChange={this.handleQueryChange}/>
-                    <button>Search</button>
+                    <button className="search-btn">Search</button>
                 </form>
 
                 <div>
@@ -53,14 +63,14 @@ class Home extends Component {
                     <GifItemList items={this.props.items}/>
                 </div>
 
-                {this.props.totalItems ?
+                {showLoadMoreButton ?
                     <div>
-                        <button type="button" onClick={this.props.onLoadMore}>Load More</button>
+                        <button className="load-more-btn" type="button" onClick={this.props.onLoadMore}>Load More</button>
                     </div>
                     : null
                 }
 
-            </Page>
+            </div>
         );
     }
 
@@ -78,21 +88,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLoadMore:() => {
-            dispatch(actions.loadMore())
-        },
-
-        onSearch: () => {
-            dispatch(actions.search())
-        },
-
-        onPageSizeChange: (pageSize) => {
-            dispatch(actions.changePageSize(pageSize));
-        },
-
-        onQueryChange: (query) => {
-            dispatch(actions.queryChange(query))
-        }
+        onLoadMore:() => dispatch(actions.loadMore()),
+        onSearch: () => dispatch(actions.search()),
+        onPageSizeChange: (pageSize) => dispatch(actions.changePageSize(pageSize)),
+        onQueryChange: (query) => dispatch(actions.queryChange(query)),
+        onLoadCancel: (query) => dispatch(actions.loadCancel())
     }
 };
 

@@ -1,7 +1,7 @@
 import * as actions from './actions';
 
 
-const defaultState = {
+export const defaultState = {
     query: '',
     tempQuery: '',
     items: [],
@@ -24,16 +24,14 @@ const reducer = (state = defaultState, action) => {
             return {
                 ...state,
                 query: state.tempQuery,
-                loading: true,
-                error: null
+                loading: true
             }
         }
 
         case actions.LOAD_MORE: {
             return {
                 ...state,
-                loading: true,
-                error: null
+                loading: true
             }
         }
 
@@ -45,7 +43,8 @@ const reducer = (state = defaultState, action) => {
                 ...state,
                 loading: false,
                 totalItems: payload.totalItems,
-                items: currentItems.concat(payload.items)
+                items: currentItems.concat(payload.items),
+                error: null
             }
         }
 
@@ -54,6 +53,13 @@ const reducer = (state = defaultState, action) => {
                 ...state,
                 loading: false,
                 error: action.error
+            }
+        }
+
+        case actions.LOAD_CANCEL: {
+            return {
+                ...state,
+                loading: false
             }
         }
 
