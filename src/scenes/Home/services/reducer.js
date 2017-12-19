@@ -6,7 +6,8 @@ export const defaultState = {
     tempQuery: '',
     items: [],
     totalItems: 0,
-    pageSize: 10,
+    pageSize: 12,
+    initialized: false, // this flag identifies that we ran the search at least one time
     loading: false,
     error: null
 };
@@ -44,6 +45,7 @@ const reducer = (state = defaultState, action) => {
                 loading: false,
                 totalItems: payload.totalItems,
                 items: currentItems.concat(payload.items),
+                initialized: true,
                 error: null
             }
         }

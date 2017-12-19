@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import * as actions from '../services/actions';
 import GifItem from "../../../components/gif/GifItem";
-import Page from "../../../components/layout/Page";
+import {Segment, Form, Input, Button, Grid} from 'semantic-ui-react';
+import {Route, Link} from 'react-router-dom';
 
 import './Random.css';
 
@@ -41,43 +42,58 @@ export class Random extends Component {
         const timerButtonTitle = this.props.timerStarted ? 'Stop Timer' : 'Start Timer';
 
         return (
-            <Page header={<h1>Random Gif</h1>}>
+            <Segment inverted>
+                <Grid>
+                    <Grid.Row columns={2}>
+                        <Grid.Column>
+                            <Form onSubmit={this.handleIntervalChange}>
+                                <label htmlFor="refreshInterval">Refresh Interval:</label>
+                                <Input id="refreshInterval"
+                                       ref={(input) => this.intervalInput = input}
+                                       type="number"
+                                       defaultValue={this.props.interval}/>
+                                <Button>Save</Button>
+                            </Form>
 
-                <form onSubmit={this.handleIntervalChange}>
-                    <label htmlFor="refreshInterval">Refresh Interval:</label>
-                    <input id="refreshInterval"
-                           ref={(input) => this.intervalInput = input}
-                           type="number"
-                           defaultValue={this.props.interval}/>
-                    <button>Save</button>
-                </form>
+                            <button type="button" onClick={this.handleToggleTimer}>{timerButtonTitle}</button>
+                            <button type="button" onClick={this.props.loadRandom}>Get</button>
+                        </Grid.Column>
+                        <Grid.Column>
+                            {
+                                this.props.item != null ?
+                                    <div><GifItem url={this.props.item.image_url} alt={this.props.item.caption}/></div>
+                                    : ''
+                            }
 
-                <button type="button" onClick={this.handleToggleTimer}>{timerButtonTitle}</button>
-                <button type="button" onClick={this.props.loadRandom}>Get</button>
+                            {
+                                this.props.error != null ?
+                                    <div>An error occurred: {this.props.error}</div>
+                                    : ''
+                            }
+                            <Link to={'/random/view'}>Random View</Link>
 
-                {
-                    this.props.item != null ?
-                        <div><GifItem url={this.props.item.image_url} alt={this.props.item.caption}/></div>
-                        : ''
-                }
+                            <Route path={`${this.props.match.url}/view`} component={() => <div>View</div>}/>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
 
-                {
-                    this.props.error != null ?
-                        <div>An error occurred: {this.props.error}</div>
-                        : ''
-                }
-            </Page>
+
+
+
+
+            </Segment>
         );
     }
 
 }
 
 const mapStateToProps = state => {
+    const randomState = state.random;
     return {
-        item: state.random.item,
-        interval: state.random.interval,
-        timerStarted: state.random.timerStarted,
-        error: state.random.error
+        item: randomState.item,
+        interval: randomState.interval,
+        timerStarted: randomState.timerStarted,
+        error: randomState.error
     }
 };
 

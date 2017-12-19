@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import * as actions from "../services/actions";
 import GifItemList from "../../../components/gif/GifItemList";
+import {Button, Form, Input, Segment} from 'semantic-ui-react';
 
 import './Home.scss';
 
@@ -37,40 +38,46 @@ export class Home extends Component {
             && (this.props.items.length < this.props.totalItems);
 
         return (
-            <div>
-                <h1>Home</h1>
-                <form className="query-form" onSubmit={this.handleSubmit}>
-                    <label htmlFor="query">Query:</label>
-                    <input id="query"
-                           type="text"
-                           value={this.props.query}
-                           onChange={this.handleQueryChange}/>
-                    <button className="search-btn">Search</button>
-                </form>
+            <Segment inverted>
 
-                <div>
-                    <label htmlFor="pageSize">Page Size:</label>
-                    <input id="pageSize" type="text"
-                           value={this.props.pageSize}
-                           onChange={this.handlePageSizeChange}/>
-                </div>
+                <Form inverted onSubmit={this.handleSubmit}>
+                    <Input fluid
+                           onChange={this.handleQueryChange}
+                           placeholder='Search gifs...'
+                           action={{icon: 'search'}}/>
+                </Form>
 
-                <div>
-                    {this.props.totalItems} found. Showing {this.props.items.length}
-                </div>
 
-                <div>
-                    <GifItemList items={this.props.items}/>
-                </div>
+                {/*<div>*/}
+                {/*<label htmlFor="pageSize">Page Size:</label>*/}
+                {/*<input id="pageSize" type="text"*/}
+                {/*value={this.props.pageSize}*/}
+                {/*onChange={this.handlePageSizeChange}/>*/}
+                {/*</div>*/}
 
-                {showLoadMoreButton ?
-                    <div>
-                        <button className="load-more-btn" type="button" onClick={this.props.onLoadMore}>Load More</button>
-                    </div>
+                {this.props.initialized ?
+                    <div>{this.props.totalItems} found. Showing {this.props.items.length}</div>
                     : null
                 }
 
-            </div>
+                <Segment inverted>
+                    <GifItemList items={this.props.items}/>
+                </Segment>
+
+                {showLoadMoreButton ?
+                    <Segment inverted>
+                        <Button className="load-more-btn"
+                                fluid
+                                inverted
+                                loading={this.props.loading}
+                                onClick={this.props.onLoadMore}>
+                            {this.props.loading ? 'Loading' : 'Load More'}
+                        </Button>
+                    </Segment>
+                    : null
+                }
+
+            </Segment>
         );
     }
 
@@ -82,13 +89,15 @@ const mapStateToProps = state => {
         query: homeState.tempQuery,
         items: homeState.items,
         totalItems: homeState.totalItems,
-        pageSize: homeState.pageSize
+        pageSize: homeState.pageSize,
+        loading: homeState.loading,
+        initialized: homeState.initialized
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLoadMore:() => dispatch(actions.loadMore()),
+        onLoadMore: () => dispatch(actions.loadMore()),
         onSearch: () => dispatch(actions.search()),
         onPageSizeChange: (pageSize) => dispatch(actions.changePageSize(pageSize)),
         onQueryChange: (query) => dispatch(actions.queryChange(query)),
