@@ -1,11 +1,13 @@
 import {ajax} from 'rxjs/observable/dom/ajax';
+import {Observable} from 'rxjs';
 import queryString from 'query-string';
 
-const API_KEY = 'AIzaSyCWFTfVjyWhyvj3PlXMwOYiqp2CSpt7MDw';
+const API_KEY = '<YOUR_API_KEY>';
 const FIREBASE_URL = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty';
 
 const SIGN_UP_URL = `${FIREBASE_URL}/signupNewUser`;
 const LOGIN_URL = `${FIREBASE_URL}/verifyPassword`;
+const ACCOUNT_INFO = `${FIREBASE_URL}/getAccountInfo`;
 
 
 const api = {
@@ -29,6 +31,15 @@ const api = {
             password,
             returnSecureToken: true
         });
+    },
+
+    getAccountInfo: (idToken) => {
+        return request({
+            url: ACCOUNT_INFO,
+            method: 'POST'
+        }, {
+            idToken
+        });
     }
 };
 
@@ -45,6 +56,9 @@ const request = (config, body) => {
         },
         body
     }).map(response => response.response)
+        .catch(({response: {error: {message}}}) => {
+            return Observable.throw(message);
+        });
 
 
 };

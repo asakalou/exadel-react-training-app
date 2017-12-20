@@ -13,14 +13,14 @@ export class Logout extends Component {
         return (
             <Redirect to={'/'}/>
         );
-
     }
+
 
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLogout: (email, password) => dispatch(actions.logout())
+        onLogout: () => dispatch(actions.logout())
     };
 };
 

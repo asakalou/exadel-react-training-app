@@ -25,13 +25,12 @@ const reducer = (state = defaultState, action) => {
         case actions.LOGIN_SUCCESS: {
             return {
                 ...state,
+                user: action.user,
                 token: action.token,
                 refreshToken: action.refreshToken,
-                user: action.user,
                 loggedIn: true,
-                error: null,
                 loading: false
-            }
+            };
         }
 
         case actions.REGISTER_ERROR:
@@ -40,30 +39,21 @@ const reducer = (state = defaultState, action) => {
                 ...state,
                 error: action.error,
                 loading: false
-            }
+            };
         }
 
         case actions.REGISTER_CANCEL:
         case actions.LOGIN_CANCEL: {
             return {
                 ...state,
-                loading: false,
-                error: null
-            }
+                loading: false
+            };
         }
 
         case actions.LOGOUT: {
-            return {
-                ...state,
-                loggedIn: false,
-                token: null,
-                refreshToken: null
-            }
+            return defaultState;
         }
 
-        case actions.CLEAR_INPUT_DATA: {
-            return {...state, error: null};
-        }
 
         default:
             return state;

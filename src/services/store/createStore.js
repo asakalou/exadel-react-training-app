@@ -5,6 +5,7 @@ import {combineEpics, createEpicMiddleware} from 'redux-observable';
 import {authEpic, authReducer} from "../../scenes/Auth";
 import {homeEpic, homeReducer} from "../../scenes/Home";
 import {randomEpic, randomReducer} from "../../scenes/Random";
+import {mainEpic, mainReducer} from "../../Main";
 import giphyApi from '../api/giphy';
 import appApi from '../api/app';
 
@@ -15,9 +16,10 @@ export default (history) => {
 
 // configuring epics (side effects and middleware)
     const rootEpic = combineEpics(
+        mainEpic,
+        authEpic,
         homeEpic,
-        randomEpic,
-        authEpic
+        randomEpic
     );
     const epicMiddleware = createEpicMiddleware(rootEpic, {
         dependencies: {
@@ -34,6 +36,7 @@ export default (history) => {
     return createStore(
         combineReducers({
             router: routerReducer,
+            main: mainReducer,
             auth: authReducer,
             home: homeReducer,
             random: randomReducer

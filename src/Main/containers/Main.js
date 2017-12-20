@@ -3,9 +3,12 @@ import {connect} from "react-redux";
 import {Button, Container, Menu, Dropdown} from 'semantic-ui-react';
 import {NavLink, Route, Switch, withRouter} from "react-router-dom";
 import {push} from 'react-router-redux';
-import Home from "../scenes/Home";
-import Random from "../scenes/Random";
-import {Login, Logout, SignUp} from "../scenes/Auth";
+import Home from '../../scenes/Home/index';
+import Random from '../../scenes/Random/index';
+import {Login, Logout, SignUp} from '../../scenes/Auth/index';
+import * as mainActions from '../services/actions';
+
+import './Main.css';
 
 const FixedMenu = ({onLogin, onLogout, loggedIn, user}) => (
     <Container>
@@ -29,7 +32,6 @@ const FixedMenu = ({onLogin, onLogout, loggedIn, user}) => (
                             <Dropdown.Item text='Log Out' onClick={onLogout} />
                         </Dropdown.Menu>
                     </Dropdown>
-                    {/*<Button as='a' inverted onClick={onLogout}>Log Out</Button>*/}
                 </Menu.Item>
             }
         </Menu>
@@ -39,7 +41,19 @@ const FixedMenu = ({onLogin, onLogout, loggedIn, user}) => (
 
 export class Main extends Component {
 
+    componentDidMount() {
+        // request for all the actions related to app initialisation
+        this.props.onInitApp();
+    }
+
     render() {
+        // if app is not initialised do not show anything
+        // this one is coming from main state in store
+        // see main reducer
+        if (!this.props.initialised) {
+            return null;
+        }
+
         return (
             <Fragment>
                 <FixedMenu loggedIn={this.props.loggedIn}
@@ -65,12 +79,14 @@ export class Main extends Component {
 const mapStateToProps = state => {
     return {
         loggedIn: state.auth.loggedIn,
-        user: state.auth.user
+        user: state.auth.user,
+        initialised: state.main.initialised
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        onInitApp: () => dispatch(mainActions.initApp()),
         onLogin: () => dispatch(push('/login')),
         onLogout: () => dispatch(push('/logout'))
     }

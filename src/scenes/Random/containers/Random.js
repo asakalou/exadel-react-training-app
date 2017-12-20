@@ -46,12 +46,16 @@ export class Random extends Component {
                 <Grid>
                     <Grid.Row columns={2}>
                         <Grid.Column>
-                            <Form onSubmit={this.handleIntervalChange}>
-                                <label htmlFor="refreshInterval">Refresh Interval:</label>
-                                <Input id="refreshInterval"
-                                       ref={(input) => this.intervalInput = input}
-                                       type="number"
-                                       defaultValue={this.props.interval}/>
+                            <Form inverted onSubmit={this.handleIntervalChange}>
+                                <Form.Field inline>
+                                    <label htmlFor="refreshInterval">Refresh Interval:</label>
+                                    <Input id="refreshInterval"
+                                           ref={(input) => this.intervalInput = input}
+                                           type="number"
+                                           min={5}
+                                           defaultValue={this.props.interval}/>
+                                </Form.Field>
+
                                 <Button>Save</Button>
                             </Form>
 
@@ -70,9 +74,9 @@ export class Random extends Component {
                                     <div>An error occurred: {this.props.error}</div>
                                     : ''
                             }
-                            <Link to={'/random/view'}>Random View</Link>
+                            {/*<Link to={'/random/view'}>Random View</Link>*/}
 
-                            <Route path={`${this.props.match.url}/view`} component={() => <div>View</div>}/>
+                            {/*<Route path={`${this.props.match.url}/view`} component={() => <div>View</div>}/>*/}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

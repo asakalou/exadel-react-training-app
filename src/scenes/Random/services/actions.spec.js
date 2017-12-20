@@ -1,7 +1,7 @@
 import React from 'react';
 import * as actions from './actions';
 
-describe('actions', () => {
+describe('randomActions', () => {
 
     it('should return action with type LOAD_RANDOM', () => {
         const action = actions.loadRandom();

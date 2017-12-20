@@ -5,13 +5,12 @@ import './App.css';
 import {Provider} from 'react-redux';
 import createHistory from 'history/createBrowserHistory';
 import {ConnectedRouter} from 'react-router-redux';
-import createStore from "./services/store/createStore";
+import {createStore} from "./services/store";
 import Main from "./Main";
 
 
 const history = createHistory();
 const store = createStore(history);
-
 
 
 class App extends Component {
