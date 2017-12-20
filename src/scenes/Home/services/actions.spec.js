@@ -1,7 +1,6 @@
-import React from 'react';
 import * as actions from './actions';
 
-describe('actions', () => {
+describe('homeActions', () => {
 
     it('should return action with type SEARCH', () => {
         const action = actions.search();
