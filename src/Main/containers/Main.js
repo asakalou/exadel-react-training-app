@@ -92,6 +92,7 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
+// using withRouter due to https://github.com/ReactTraining/react-router/issues/4671
 export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
