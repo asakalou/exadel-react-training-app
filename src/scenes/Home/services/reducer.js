@@ -39,12 +39,16 @@ const reducer = (state = defaultState, action) => {
         case actions.LOAD_SUCCESS: {
             const payload = action.payload;
             const currentItems = payload.clearItems ? [] : state.items;
+            const items = currentItems.concat(payload.items);
+            const hasMoreItems = (payload.totalItems != null && items.length < payload.totalItems)
+                || (payload.totalItems == null && payload.items.length > 0);
 
             return {
                 ...state,
                 loading: false,
                 totalItems: payload.totalItems,
-                items: currentItems.concat(payload.items),
+                items,
+                hasMoreItems: hasMoreItems,
                 initialized: true,
                 error: null
             }

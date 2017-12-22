@@ -21,6 +21,10 @@ export class SignUp extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
+    componentWillUnmount() {
+        this.props.onClearAuthFormState();
+    }
+
     handleSubmit(event) {
         event.preventDefault();
         this.props.onJoin(this.state.email, this.state.password);
@@ -89,6 +93,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onClearAuthFormState: () => dispatch(actions.clearAuthFormState()),
         onJoin: (email, password) => dispatch(actions.register(email, password)),
     };
 };

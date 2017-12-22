@@ -95,6 +95,8 @@ describe('homeReducer', () => {
                 ...defaultState,
                 items: [{title: 2}, {title: 3}],
                 totalItems: 2,
+                initialized: true,
+                hasMoreItems: false,
                 loading: false,
                 error: null
             });
@@ -119,6 +121,8 @@ describe('homeReducer', () => {
                 ...defaultState,
                 items: [{title: 1}, {title: 2}, {title: 3}],
                 totalItems: 3,
+                hasMoreItems: false,
+                initialized: true,
                 loading: false,
                 error: null
             });

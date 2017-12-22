@@ -1,13 +1,15 @@
-import {applyMiddleware, combineReducers, compose, createStore} from "redux";
-import {routerMiddleware, routerReducer} from 'react-router-redux';
+import {applyMiddleware, compose, createStore} from "redux";
+import {routerMiddleware} from 'react-router-redux';
 import {combineEpics, createEpicMiddleware} from 'redux-observable';
-
-import {authEpic, authReducer} from "../../scenes/Auth";
-import {homeEpic, homeReducer} from "../../scenes/Home";
-import {randomEpic, randomReducer} from "../../scenes/Random";
-import {mainEpic, mainReducer} from "../../Main";
+import {authEpic} from "../../scenes/Auth";
+import {homeEpic} from "../../scenes/Home";
+import {randomEpic} from "../../scenes/Random";
+import {favouritesEpic} from "../../scenes/Favourites";
+import {mainEpic} from "../../Main";
 import giphyApi from '../api/giphy';
 import appApi from '../api/app';
+import appStorage from '../api/storage';
+import appReducer from "./appReducer";
 
 
 export default (history) => {
@@ -19,28 +21,23 @@ export default (history) => {
         mainEpic,
         authEpic,
         homeEpic,
-        randomEpic
+        randomEpic,
+        favouritesEpic
     );
     const epicMiddleware = createEpicMiddleware(rootEpic, {
         dependencies: {
             giphyApi,
-            appApi
+            appApi,
+            appStorage
         }
     });
 
 // needed to setup redux dev tools
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-
 // creating the store
     return createStore(
-        combineReducers({
-            router: routerReducer,
-            main: mainReducer,
-            auth: authReducer,
-            home: homeReducer,
-            random: randomReducer
-        }),
+        appReducer,
         composeEnhancers(
             applyMiddleware(
                 //   loggerMiddleware,

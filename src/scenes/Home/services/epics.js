@@ -14,7 +14,9 @@ export const loadEpic = (action$, store, {giphyApi}) =>
                 offset: clearItems ? 0 : homeState.items.length
             };
 
-            return giphyApi.loadByQuery(params)
+            const searchApiAction = params.q ? giphyApi.loadByQuery : giphyApi.loadTrending;
+
+            return searchApiAction(params)
                 .map(response => {
                     return actions.loadSuccess(
                         {

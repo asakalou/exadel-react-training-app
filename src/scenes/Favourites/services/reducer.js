@@ -1,33 +1,37 @@
 import * as actions from './actions';
-
+import * as favouritesActions from '../../../services/store/actions/favouritesActions';
 
 export const defaultState = {
-    item: null,
-    interval: 5,
-    timerStarted: false,
+    items: [],
+    itemsIds: {},
+    totalItems: 0,
+    initialized: false,
     loading: false,
     error: null
 };
 
 const reducer = (state = defaultState, action) => {
     switch (action.type) {
-        case actions.LOAD_RANDOM: {
+        case actions.LOAD_FAVOURITES: {
             return {
                 ...state,
                 loading: true
             }
         }
 
-        case actions.LOAD_SUCCESS: {
+        case actions.LOAD_FAVOURITES_SUCCESS: {
             return {
                 ...state,
-                item: action.item,
+                items: action.items,
+                itemsIds: action.itemsIds,
+                totalItems: action.totalItems,
+                initialized: true,
                 loading: false,
                 error: null
             }
         }
 
-        case actions.LOAD_ERROR: {
+        case actions.LOAD_FAVOURITES_ERROR: {
             return {
                 ...state,
                 loading: false,
@@ -35,7 +39,14 @@ const reducer = (state = defaultState, action) => {
             }
         }
 
-        case actions.LOAD_CANCEL: {
+        case favouritesActions.REMOVE_FROM_FAVOURITES: {
+            return {
+                ...state,
+                loading: true
+            }
+        }
+
+        case favouritesActions.REMOVE_FROM_FAVOURITES_SUCCESS: {
             return {
                 ...state,
                 loading: false,
@@ -43,24 +54,11 @@ const reducer = (state = defaultState, action) => {
             }
         }
 
-        case actions.START_TIMER: {
+        case favouritesActions.REMOVE_FROM_FAVOURITES_ERROR: {
             return {
                 ...state,
-                timerStarted: true
-            }
-        }
-
-        case actions.STOP_TIMER: {
-            return {
-                ...state,
-                timerStarted: false
-            }
-        }
-
-        case actions.CHANGE_INTERVAL: {
-            return {
-                ...state,
-                interval: action.interval
+                loading: false,
+                error: action.error
             }
         }
 

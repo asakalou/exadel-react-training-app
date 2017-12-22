@@ -1,22 +1,22 @@
-export const PRE_LOGIN = 'pre-login';
+export const CLEAR_AUTH_FORM_STATE = 'auth/clear-auth-form-state';
 
-export const LOGIN = 'login/login';
-export const LOGIN_SUCCESS = 'login/success';
-export const LOGIN_ERROR = 'login/error';
-export const LOGIN_CANCEL = 'login/cancel';
+export const LOGIN = 'auth/login';
+export const LOGIN_SUCCESS = 'auth/login/success';
+export const LOGIN_ERROR = 'auth/login/error';
+export const LOGIN_CANCEL = 'auth/login/cancel';
 
-export const LOGOUT = 'logout/logout';
-export const LOGOUT_SUCCESS = 'logout/logout-success';
+export const LOGOUT = 'auth/logout';
+export const LOGOUT_SUCCESS = 'auth/logout-success';
 
-export const REGISTER = 'register/register';
-export const REGISTER_SUCCESS = 'register/success';
-export const REGISTER_ERROR = 'register/error';
-export const REGISTER_CANCEL = 'register/cancel';
+export const REGISTER = 'auth/register';
+export const REGISTER_SUCCESS = 'auth/register/success';
+export const REGISTER_ERROR = 'auth/register/error';
+export const REGISTER_CANCEL = 'auth/register/cancel';
 
 
-export const preLogin = () => {
+export const clearAuthFormState = () => {
     return {
-        type: PRE_LOGIN
+        type: CLEAR_AUTH_FORM_STATE
     };
 };
 

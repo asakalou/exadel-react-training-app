@@ -1,0 +1,12 @@
+.gif-item {
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 10px; }
+  .gif-item-fav {
+    position: absolute;
+    top: -15px;
+    right: -20px;
+    padding: 5px;
+    font-size: 1.3rem;
+    width: 100%;
+    text-align: right; }
