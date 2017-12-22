@@ -1,17 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
-const WithAuthComponent = (MyComponent) => {
+const WithAuth = (MyComponent) => {
 
     return class WrappedComponent extends Component {
-
         constructor(props) {
             super(props);
 
-            this.state = {
-                date : new Date(),
-                loggedIn: false
-            }
+            this.state = { loggedIn: false }
         }
 
         render() {
@@ -19,23 +15,25 @@ const WithAuthComponent = (MyComponent) => {
                 <div><MyComponent {...this.props} {...this.state}/></div>
             );
         }
-
     }
 
 };
 
-const Header = ({date, loggedIn}) => {
+const Header = ({loggedIn}) => {
     return (
-        <div>{date.toString()} {loggedIn}</div>
+        <div>{loggedIn ? 'Logged In' : 'Not Logged In'}</div>
     );
 };
+
+export default WithAuth(Header);
+
+
 
 export class RenderProps extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            date : new Date(),
             loggedIn: false
         }
     }
@@ -45,4 +43,16 @@ export class RenderProps extends Component {
     }
 }
 
-export default WithAuthComponent(Header);
+
+const Header = () => {
+    return (
+        <RenderProps>
+            {(loggedIn) => {
+                return <div>{loggedIn ? 'Logged In' : 'Not Logged In'}</div>
+            }}
+        </RenderProps>
+    );
+};
+
+
+
