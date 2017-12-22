@@ -1,21 +1,26 @@
 import {ajax} from 'rxjs/observable/dom/ajax';
 import {Observable} from 'rxjs';
 import queryString from 'query-string';
+import appStorage from '../storage';
 
-const API_KEY = '<YOUR_API_KEY>';
-const FIREBASE_URL = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty';
+const API_KEY = 'AIzaSyCWFTfVjyWhyvj3PlXMwOYiqp2CSpt7MDw';
+const FIREBASE_DATA_URL = 'https://giphy-search-a225c.firebaseio.com';
+const FIREBASE_AUTH_URL = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty';
 
-const SIGN_UP_URL = `${FIREBASE_URL}/signupNewUser`;
-const LOGIN_URL = `${FIREBASE_URL}/verifyPassword`;
-const ACCOUNT_INFO = `${FIREBASE_URL}/getAccountInfo`;
+const SIGN_UP_URL = `${FIREBASE_AUTH_URL}/signupNewUser`;
+const LOGIN_URL = `${FIREBASE_AUTH_URL}/verifyPassword`;
+const ACCOUNT_INFO = `${FIREBASE_AUTH_URL}/getAccountInfo`;
 
+const AUTH_CATCH_CB = ({response: {error: {message}}}) => {
+    return Observable.throw(message);
+};
 
 const api = {
     signUp: (email, password) => {
         return request({
             url: SIGN_UP_URL,
             method: 'POST'
-        }, {
+        }, null, {
             email,
             password,
             returnSecureToken: true
@@ -26,7 +31,7 @@ const api = {
         return request({
             url: LOGIN_URL,
             method: 'POST'
-        }, {
+        }, null, {
             email,
             password,
             returnSecureToken: true
@@ -37,15 +42,54 @@ const api = {
         return request({
             url: ACCOUNT_INFO,
             method: 'POST'
-        }, {
+        }, null, {
             idToken
         });
+    },
+
+    loadFavourites: (currentUser) => {
+        return request({
+            url: `${FIREBASE_DATA_URL}/users/${currentUser.id}/favourites.json`,
+            method: 'GET'
+        }, {
+            auth: currentUser.token
+        }).map(response => {
+            const convertedResponse = {
+                items: [],
+                itemsIds: {}
+            };
+
+            if (response) {
+                for (let key of Object.keys(response)) {
+                    convertedResponse.items.push(response[key]);
+                    convertedResponse.itemsIds[key] = true;
+                }
+            }
+
+            return convertedResponse;
+        });
+    },
+
+    addToFavourites: (item, currentUser) => {
+
+        return request({
+            url: `${FIREBASE_DATA_URL}/users/${currentUser.id}/favourites/${item.id}.json`,
+            method: 'PUT'
+        }, {auth: currentUser.token}, item);
+    },
+
+    removeFromFavourites: (item, currentUser) => {
+        return request({
+            url: `${FIREBASE_DATA_URL}/users/${currentUser.id}/favourites/${item.id}.json`,
+            method: 'DELETE'
+        }, {auth: currentUser.token}, item);
     }
 };
 
-const request = (config, body) => {
+const request = (config, params, body, catchCb) => {
     const rParams = queryString.stringify({
-        key: API_KEY
+        key: API_KEY,
+        ...params
     });
 
     return ajax({
@@ -56,9 +100,7 @@ const request = (config, body) => {
         },
         body
     }).map(response => response.response)
-        .catch(({response: {error: {message}}}) => {
-            return Observable.throw(message);
-        });
+        .catch(catchCb);
 
 
 };

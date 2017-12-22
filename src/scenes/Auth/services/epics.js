@@ -1,35 +1,11 @@
 import {combineEpics} from 'redux-observable';
-
+import appStorage from '../../../services/api/storage';
+import {Observable} from 'rxjs';
+import errorToMessage from '../../../services/errors/errorToMessage';
 import * as actions from './actions';
-import {Observable} from "rxjs";
-import errorToMessage from "../../../services/errors/errorToMessage";
-import {appActions} from "../../../services/store";
-import * as localStore from 'store';
 
 
-export const preLoginEpic = (action$, store, {appApi}) =>
-    action$.ofType(actions.PRE_LOGIN)
-        .switchMap(action => {
-            const idToken = localStore.get('idToken');
-
-            return appApi.getAccountInfo(idToken)
-                .map(({users}) => {
-                    const {
-                        localId: id,
-                        email,
-                        idToken,
-                        refreshToken
-                    } = users[0];
-
-                    return actions.loginSuccess(idToken, refreshToken, {id, email});
-                })
-                .catch(error => {
-                    return appActions.emptyAction();
-                });
-        });
-
-
-export const loginEpic = (action$, store, {appApi}) =>
+export const loginEpic = (action$, store, {appApi, appStorage}) =>
     action$.ofType(actions.LOGIN)
         .switchMap(action => {
             return appApi.login(action.email, action.password)
@@ -39,8 +15,7 @@ export const loginEpic = (action$, store, {appApi}) =>
                         email: action.email
                     };
 
-                    localStore.set('idToken', idToken);
-                    localStore.set('refreshToken', refreshToken);
+                    appStorage.saveUserData(idToken, refreshToken, localId);
 
                     return actions.loginSuccess(idToken, refreshToken, user);
                 })
@@ -52,16 +27,16 @@ export const loginEpic = (action$, store, {appApi}) =>
                 .takeUntil(action$.ofType(actions.LOGIN_CANCEL));
         });
 
-export const logoutEpic = (action$, store) =>
+
+export const logoutEpic = (action$, store, {appStorage}) =>
     action$.ofType(actions.LOGOUT)
         .switchMap(action => {
-            localStore.remove('idToken');
-            localStore.remove('refreshToken');
+            appStorage.clearData();
 
             return Observable.of(actions.logoutSuccess());
         });
 
-export const signUpEpic = (action$, store, {appApi}) =>
+export const signUpEpic = (action$, store, {appApi, appStorage}) =>
     action$.ofType(actions.REGISTER)
         .switchMap(action => {
             return appApi.signUp(action.email, action.password)
@@ -70,6 +45,8 @@ export const signUpEpic = (action$, store, {appApi}) =>
                         id: localId,
                         email: action.email
                     };
+
+                    appStorage.saveUserData(idToken, refreshToken, localId);
 
                     return actions.registerSuccess(idToken, refreshToken, user);
                 })
@@ -83,7 +60,6 @@ export const signUpEpic = (action$, store, {appApi}) =>
 
 
 export default combineEpics(
-    preLoginEpic,
     loginEpic,
     logoutEpic,
     signUpEpic

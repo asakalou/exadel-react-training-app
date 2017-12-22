@@ -1,6 +1,7 @@
 import {combineEpics} from 'redux-observable';
 
 import * as actions from './actions';
+import {appActions} from '../../../services/store';
 import {Observable} from 'rxjs';
 
 export const loadRandomEpic = (action$, store, {giphyApi}) =>
@@ -15,7 +16,7 @@ export const loadRandomEpic = (action$, store, {giphyApi}) =>
 export const changeIntervalEpic = (action$, store, {giphyApi}) =>
     action$.ofType(actions.CHANGE_INTERVAL)
         .switchMap(action => {
-            let nextAction = {type: 'unknown'};
+            let nextAction = appActions.emptyAction();
 
             if (store.getState().random.timerStarted) {
                 nextAction = actions.startTimer();

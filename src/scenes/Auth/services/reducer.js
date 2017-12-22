@@ -13,6 +13,14 @@ export const defaultState = {
 const reducer = (state = defaultState, action) => {
     switch (action.type) {
 
+        case actions.CLEAR_AUTH_FORM_STATE: {
+            return {
+                ...state,
+                loading: false,
+                error: null
+            };
+        }
+
         case actions.REGISTER:
         case actions.LOGIN: {
             return {

@@ -4,6 +4,7 @@ import * as actions from '../../services/actions';
 import {Button, Container, Form, Header, Input, Message} from "semantic-ui-react";
 import {Redirect} from "react-router-dom";
 import {push} from 'react-router-redux';
+import {CSSTransitionGroup} from "react-transition-group";
 
 import '../../components/Auth.css';
 
@@ -20,6 +21,10 @@ export class Login extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    componentWillUnmount() {
+        this.props.onClearAuthFormState();
     }
 
     handleSubmit(event) {
@@ -44,10 +49,17 @@ export class Login extends Component {
                 <div className="gs-auth__form">
                     <Header as={'h2'} inverted>GIPHY Search</Header>
 
-                    {this.props.error ?
-                        <Message error content={this.props.error}/>
-                        : null
-                    }
+
+                    <CSSTransitionGroup
+                        component="div"
+                        transitionName="example"
+                        transitionEnterTimeout={1500}
+                        transitionLeaveTimeout={700}>
+                        {this.props.error ?
+                            <Message error content={this.props.error}/>
+                            : null
+                        }
+                    </CSSTransitionGroup>
 
                     <Form inverted onSubmit={this.handleSubmit}>
                         <Form.Field>
@@ -65,6 +77,7 @@ export class Login extends Component {
                                 this.handleInputChange('password', event.target.value)
                             }}
                                    fluid
+                                   type="password"
                                    placeholder='Password'/>
                         </Form.Field>
 
@@ -99,6 +112,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onClearAuthFormState: () => dispatch(actions.clearAuthFormState()),
         onLogin: (email, password) => dispatch(actions.login(email, password)),
         onJoin: () => dispatch(push('/join'))
     };

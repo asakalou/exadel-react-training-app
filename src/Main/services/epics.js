@@ -4,15 +4,15 @@ import * as actions from './actions';
 import {authActions} from '../../scenes/Auth';
 import {appActions} from '../../services/store';
 import {Observable} from 'rxjs';
-import * as localStore from 'store';
+import appStorage from '../../services/api/storage';
 
 
 export const appInitEpic = (action$, store, {appApi}) =>
     action$.ofType(actions.INIT_APP)
         .switchMap(action => {
 
-            const idToken = localStore.get('idToken');
-            const getAccountInfo = appApi.getAccountInfo(idToken)
+            const user = appStorage.getUser();
+            const getAccountInfo = appApi.getAccountInfo(user.token)
                 .map(({users}) => {
                     const {
                         localId: id,

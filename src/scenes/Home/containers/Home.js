@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import * as actions from "../services/actions";
-import GifItemList from "../../../components/gif/GifItemList";
-import {Button, Form, Input, Segment} from 'semantic-ui-react';
+import * as actions from '../services/actions';
+import {favouritesActions} from '../../../services/store';
+import GifItemList from '../../../components/gif/GifItemList';
+import {Button, Input, Segment} from 'semantic-ui-react';
 
 import './Home.scss';
 
@@ -13,7 +14,10 @@ export class Home extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleQueryChange = this.handleQueryChange.bind(this);
-        this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.onSearch();
     }
 
     componentWillUnmount() {
@@ -22,6 +26,7 @@ export class Home extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
+
         this.props.onSearch();
     }
 
@@ -29,51 +34,45 @@ export class Home extends Component {
         this.props.onQueryChange(event.target.value);
     }
 
-    handlePageSizeChange(event) {
-        this.props.onPageSizeChange(event.target.value);
-    }
-
     render() {
-        const showLoadMoreButton = !!this.props.totalItems
-            && (this.props.items.length < this.props.totalItems);
+        let itemsFoundDescription;
+
+        if (this.props.totalItems != null) {
+            itemsFoundDescription = `${this.props.totalItems} found. Showing ${this.props.items.length}`;
+        } else {
+            itemsFoundDescription = `Showing ${this.props.items.length}`;
+        }
 
         return (
             <Segment inverted>
 
-                <Form inverted onSubmit={this.handleSubmit}>
+                <form className="ui form inverted gs-home-query-form" onSubmit={this.handleSubmit}>
                     <Input fluid
+                           className="gs-home-query"
                            onChange={this.handleQueryChange}
+                           value={this.props.query}
                            placeholder='Search gifs...'
                            action={{icon: 'search'}}/>
-                </Form>
-
-
-                {/*<div>*/}
-                {/*<label htmlFor="pageSize">Page Size:</label>*/}
-                {/*<input id="pageSize" type="text"*/}
-                {/*value={this.props.pageSize}*/}
-                {/*onChange={this.handlePageSizeChange}/>*/}
-                {/*</div>*/}
+                </form>
 
                 {this.props.initialized ?
-                    <div>{this.props.totalItems} found. Showing {this.props.items.length}</div>
+                    <div>{itemsFoundDescription}</div>
                     : null
                 }
 
-                <Segment inverted>
-                    <GifItemList items={this.props.items}/>
-                </Segment>
+                <GifItemList fav={this.props.loggedIn}
+                             items={this.props.items}
+                             favouriteItems={this.props.favouriteItems}
+                             onFavClick={this.props.onToggleFavourite}/>
 
-                {showLoadMoreButton ?
-                    <Segment inverted>
-                        <Button className="load-more-btn"
-                                fluid
-                                inverted
-                                loading={this.props.loading}
-                                onClick={this.props.onLoadMore}>
-                            {this.props.loading ? 'Loading' : 'Load More'}
-                        </Button>
-                    </Segment>
+                {this.props.hasMoreItems ?
+                    <Button className="load-more-btn"
+                            fluid
+                            inverted
+                            loading={this.props.loading}
+                            onClick={this.props.onLoadMore}>
+                        {this.props.loading ? 'Loading' : 'Load More'}
+                    </Button>
                     : null
                 }
 
@@ -86,9 +85,12 @@ export class Home extends Component {
 const mapStateToProps = state => {
     const homeState = state.home;
     return {
+        loggedIn: state.auth.loggedIn,
         query: homeState.tempQuery,
         items: homeState.items,
+        favouriteItems: state.favourites.itemsIds,
         totalItems: homeState.totalItems,
+        hasMoreItems: homeState.hasMoreItems,
         pageSize: homeState.pageSize,
         loading: homeState.loading,
         initialized: homeState.initialized
@@ -101,7 +103,8 @@ const mapDispatchToProps = dispatch => {
         onSearch: () => dispatch(actions.search()),
         onPageSizeChange: (pageSize) => dispatch(actions.changePageSize(pageSize)),
         onQueryChange: (query) => dispatch(actions.queryChange(query)),
-        onLoadCancel: (query) => dispatch(actions.loadCancel())
+        onLoadCancel: (query) => dispatch(actions.loadCancel()),
+        onToggleFavourite: (item) => dispatch(favouritesActions.toggleFavouriteItem(item))
     }
 };
 

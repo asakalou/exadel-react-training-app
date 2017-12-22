@@ -28,34 +28,30 @@ describe('<Home/>', () => {
         wrapper = shallow(<Home {...props}/>);
     });
 
-
-    it('should display Home header', () => {
-        expect(wrapper.find('h1').text()).toBe('Home');
-    });
-
     it('should call onSearch if on search form submit', () => {
-        expect(props.onSearch.mock.calls.length).toBe(0);
+        const initialLength = props.onSearch.mock.calls.length;
 
-        wrapper.find('.query-form')
+        wrapper.find('.gs-home-query-form')
             .simulate('submit', {
                 preventDefault: () => {
                 }
             });
 
-        expect(props.onSearch.mock.calls.length).toBe(1);
+        expect(props.onSearch.mock.calls.length).toBe(initialLength + 1);
     });
 
     it('should call onQueryChange if query value changes', () => {
         expect(props.onQueryChange.mock.calls.length).toBe(0);
 
-        wrapper.find('#query')
+        wrapper.find('.gs-home-query')
             .simulate('change', {target: {value: 'query'}});
 
         expect(props.onQueryChange.mock.calls.length).toBe(1);
         expect(props.onQueryChange.mock.calls[0][0]).toBe('query');
     });
 
-    it('should call onPageSizeChange if pageSize value changes', () => {
+    // temporary disabling since there is no page size change functionality on the page now
+    xit('should call onPageSizeChange if pageSize value changes', () => {
         expect(props.onPageSizeChange.mock.calls.length).toBe(0);
 
         wrapper.find('#pageSize')
@@ -69,6 +65,7 @@ describe('<Home/>', () => {
         const newProps = {
             ...props,
             totalItems: 5,
+            hasMoreItems: true,
             items: [{}]
         };
 
@@ -81,6 +78,7 @@ describe('<Home/>', () => {
         const newProps = {
             ...props,
             totalItems: 1,
+            hasMoreItems: false,
             items: [{}]
         };
 
