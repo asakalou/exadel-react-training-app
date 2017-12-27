@@ -1,7 +1,7 @@
 import {routerReducer} from 'react-router-redux';
 import {combineReducers} from "redux";
 import {authReducer} from "../../scenes/Auth";
-import {homeReducer} from "../../scenes/Home";
+import homeReducer from "../../scenes/Home/services/reducer";
 import {randomReducer} from "../../scenes/Random";
 import {favouritesReducer} from "../../scenes/Favourites";
 import {mainReducer} from "../../Main";
@@ -28,5 +28,5 @@ export default (state, action) => {
         }
     }
 
-    return reducers(state, action);
+    return reducers(state, action)
 };

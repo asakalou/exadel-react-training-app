@@ -1,5 +1,4 @@
 import {combineEpics} from 'redux-observable';
-import appStorage from '../../../services/api/storage';
 import {Observable} from 'rxjs';
 import errorToMessage from '../../../services/errors/errorToMessage';
 import * as actions from './actions';

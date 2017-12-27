@@ -5,13 +5,25 @@ import './GifItem.css';
 import {Icon} from "semantic-ui-react";
 
 const propTypes = {
+    /** any valid url of gif image */
     url: PropTypes.string.isRequired,
+    /** alternative text */
     alt: PropTypes.string.isRequired,
+    /** is favourite or usual */
     favourite: PropTypes.bool,
+    /** display favourite icon or not */
     fav: PropTypes.bool,
+    /** click handler on fav icon */
     onFavClick: PropTypes.func
 };
 
+/**
+ * Gif Item component.
+ * Display gif for url.
+ *
+ * @version 1.0.0
+ * @author me
+ */
 const GifItem = ({url, alt, favourite, fav, onFavClick}) => {
     return (
         <div className="gif-item">
@@ -27,5 +39,8 @@ const GifItem = ({url, alt, favourite, fav, onFavClick}) => {
     )
 };
 GifItem.propTypes = propTypes;
+GifItem.defaultProps = {
+    fav: false
+};
 
 export default GifItem;

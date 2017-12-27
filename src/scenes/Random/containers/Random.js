@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import * as actions from '../services/actions';
-import GifItem from "../../../components/gif/GifItem";
-import {Segment, Form, Input, Button, Grid} from 'semantic-ui-react';
-import {Route, Link} from 'react-router-dom';
+import GifItem from '../../../components/gif/GifItem';
+import {Button, Form, Grid, Input, Segment} from 'semantic-ui-react';
 
 import './Random.css';
 
@@ -74,15 +73,9 @@ export class Random extends Component {
                                     <div>An error occurred: {this.props.error}</div>
                                     : ''
                             }
-                            {/*<Link to={'/random/view'}>Random View</Link>*/}
-
-                            {/*<Route path={`${this.props.match.url}/view`} component={() => <div>View</div>}/>*/}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-
-
-
 
 
             </Segment>

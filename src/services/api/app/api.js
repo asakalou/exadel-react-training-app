@@ -1,7 +1,6 @@
 import {ajax} from 'rxjs/observable/dom/ajax';
 import {Observable} from 'rxjs';
 import queryString from 'query-string';
-import appStorage from '../storage';
 
 const API_KEY = 'AIzaSyCWFTfVjyWhyvj3PlXMwOYiqp2CSpt7MDw';
 const FIREBASE_DATA_URL = 'https://giphy-search-a225c.firebaseio.com';
@@ -35,7 +34,7 @@ const api = {
             email,
             password,
             returnSecureToken: true
-        });
+        }, AUTH_CATCH_CB);
     },
 
     getAccountInfo: (idToken) => {
@@ -44,7 +43,7 @@ const api = {
             method: 'POST'
         }, null, {
             idToken
-        });
+        }, AUTH_CATCH_CB);
     },
 
     loadFavourites: (currentUser) => {
@@ -71,7 +70,6 @@ const api = {
     },
 
     addToFavourites: (item, currentUser) => {
-
         return request({
             url: `${FIREBASE_DATA_URL}/users/${currentUser.id}/favourites/${item.id}.json`,
             method: 'PUT'

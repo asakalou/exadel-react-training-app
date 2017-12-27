@@ -1,9 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import GifItem from '../GifItem';
 
 import './GifItemList.css';
 import {CSSTransitionGroup} from "react-transition-group";
 
+const propTypes = {
+    /** list of gif items */
+    items: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        images: PropTypes.shape({
+            slug: PropTypes.string,
+            fixed_width: PropTypes.shape({
+                url: PropTypes.string.isRequired
+            }).isRequired
+        }).isRequired
+    }))
+};
+
+/**
+ * Display list of gif item components
+ */
 const GifItemList = ({items, favouriteItems, fav, onFavClick}) => {
     return (
         <CSSTransitionGroup
@@ -25,6 +42,12 @@ const GifItemList = ({items, favouriteItems, fav, onFavClick}) => {
             })}
         </CSSTransitionGroup>
     );
+};
+
+GifItemList.propTypes = propTypes;
+
+GifItemList.defaultProps = {
+    items: []
 };
 
 export default GifItemList;
