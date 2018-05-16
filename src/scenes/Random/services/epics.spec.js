@@ -1,9 +1,9 @@
 import React from 'react';
-
-import {ActionsObservable} from 'redux-observable';
 import {Observable} from 'rxjs';
+import 'rxjs/add/operator/delay';
 import {loadRandomEpic} from './epics';
 import * as randomActions from './actions';
+import {expectEpic} from "../../../utils/epics";
 
 
 describe('randomEpics', () => {
@@ -19,8 +19,6 @@ describe('randomEpics', () => {
         }
     };
 
-    const action$ = ActionsObservable.of({type: randomActions.LOAD_RANDOM});
-
     describe('loadRandomEpic', () => {
 
         it('should receive LOAD_SUCCESS', () => {
@@ -32,37 +30,50 @@ describe('randomEpics', () => {
                 }
             };
 
-            loadRandomEpic(action$, store, dependencies)
-                .toArray()
-                .subscribe(actions => {
-                    expect(actions).toEqual([{
-                        type: randomActions.LOAD_SUCCESS,
-                        item: {
-                            url: 'url 1'
+            expectEpic(
+                loadRandomEpic,
+                dependencies,
+                store,
+                {
+                    i: {t: 'a', a: {a: randomActions.loadRandom()}},
+                    o: {
+                        t: 'b', a: {
+                            b: {
+                                type: randomActions.LOAD_SUCCESS,
+                                item: {
+                                    url: 'url 1'
+                                }
+                            }
                         }
-                    }]);
-                })
+                    }
+                }
+            );
         });
 
         it('should not receive LOAD_SUCCESS if LOAD_CANCEL called', () => {
             const dependencies = {
                 giphyApi: {
-                    loadRandom: () => Observable.of({
-                        url: 'url 1'
-                    })
+                    loadRandom: jest.fn()
                 }
             };
 
-            const actions$ = ActionsObservable.of(
-                {type: randomActions.LOAD_RANDOM},
-                {type: randomActions.LOAD_CANCEL}
+            expectEpic(
+                loadRandomEpic,
+                dependencies,
+                store,
+                {
+                    i: {
+                        t: 'a-b', a: {
+                            a: randomActions.loadRandom(),
+                            b: randomActions.loadCancel()
+                        }
+                    },
+                    o: {t: '----'}
+                },
+                (scheduler) => {
+                    dependencies.giphyApi.loadRandom.mockReturnValue(Observable.of({url: 'url-1'}).delay(20, scheduler));
+                }
             );
-
-            loadRandomEpic(actions$, store, dependencies)
-                .toArray()
-                .subscribe(actions => {
-                    expect(actions.length).toBe(0);
-                })
         });
 
     });
